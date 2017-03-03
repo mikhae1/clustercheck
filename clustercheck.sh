@@ -41,7 +41,7 @@ fail() {
   exit 1
 }
 
-function success() {
+success() {
   local msg="OK $1"
 
   echo -en "HTTP/1.1 200 OK\r\n"
@@ -71,12 +71,12 @@ check_disabled() {
   [ -e "$DISABLE_FILE" ] && fail 'Node was manually disabled'
 }
 
-if [[ $1 == '-h' || $1 == '--help' ]]; then
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
   echo "Usage: $0 <enable|disable>"
   exit 0
-elif [[ $1 == 'disable' || $1 == '--disable' ]]; then
+elif [[ "$1" == "disable" || "$1" == "--disable" ]]; then
   touch "$DISABLE_FILE"
-elif [[ $1 == 'enable' || $1 == '--enable' ]]; then
+elif [[ "$1" == "enable" || "$1" == "--enable" ]]; then
   rm -f "$DISABLE_FILE"
 fi
 
