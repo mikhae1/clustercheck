@@ -12,14 +12,14 @@ Below is a sample configuration for HAProxy on the client. The point of this is 
       balance leastconn
       option httpchk
       mode tcp
-        server node1 1.2.3.4:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2
-        server node2 1.2.3.5:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2
-        server node3 1.2.3.6:3306 check port 9200 inter 5000 fastinter 2000 rise 2 fall 2 backup
+        server node1 1.2.3.4:3306 check port 9100 inter 5000 fastinter 2000 rise 2 fall 2
+        server node2 1.2.3.5:3306 check port 9100 inter 5000 fastinter 2000 rise 2 fall 2
+        server node3 1.2.3.6:3306 check port 9100 inter 5000 fastinter 2000 rise 2 fall 2 backup
 
-MySQL connectivity is checked via HTTP on port 9200. The clustercheck script is a simple shell script which accepts HTTP requests and checks MySQL on an incoming request. If the Percona XtraDB Cluster node is ready to accept requests, it will respond with HTTP code 200 (OK), otherwise a HTTP error 503 (Service Unavailable) is returned.
+MySQL connectivity is checked via HTTP on port 9100. The clustercheck script is a simple shell script which accepts HTTP requests and checks MySQL on an incoming request. If the Percona XtraDB Cluster node is ready to accept requests, it will respond with HTTP code 200 (OK), otherwise a HTTP error 503 (Service Unavailable) is returned.
 
 ## Setup with xinetd ##
-This setup will create a process that listens on TCP port 9200 using xinetd. This process uses the clustercheck script from this repository to report the status of the node.
+This setup will create a process that listens on TCP port 9100 using xinetd. This process uses the clustercheck script from this repository to report the status of the node.
 
 First, create a clustercheckuser that will be doing the checks.
 
@@ -36,7 +36,7 @@ Copy the clustercheck from the repository to a location (`/usr/local/bin` in the
             disable = no
             flags = REUSE
             socket_type = stream
-            port = 9200
+            port = 9100
             wait = no
             user = nobody
             server = /usr/local/bin/clustercheck.sh
@@ -48,11 +48,11 @@ Copy the clustercheck from the repository to a location (`/usr/local/bin` in the
 Also, you should add the clustercheck service to `/etc/services` before restarting xinetd.
 
     xinetd          9098/tcp    # ...
-    clustercheck    9200/tcp    # MySQL check  <--- Add this line
+    clustercheck    9100/tcp    # MySQL check  <--- Add this line
     git             9418/tcp    # Git Version Control System
     zope            9673/tcp    # ...
 
-Clustercheck will now listen on port 9200 after xinetd restart, and HAproxy is ready to check MySQL via HTTP poort 9200.
+Clustercheck will now listen on port 9100 after xinetd restart, and HAproxy is ready to check MySQL via HTTP poort 9100.
 
 ## Setup with shell return values ##
 If you do not want to use the setup with xinetd, you can also execute `clustercheck` on the commandline and check for the return value.

@@ -10,7 +10,8 @@ main() {
   # Examles:
   # Check process is running (by name)
   # out="$(ps aux | grep nginx | grep -v grep | wc -l)"
-  # check_not_equals "$out" "0" "Nginx server is down"
+  # check_equals "$out" "0" "Nginx server is down"
+  # echo $out
   #
   # Check if socket 3000 is open (Centos 7):
   # out="$(/usr/sbin/ss -ltn 2>$ERR_LOG | grep 3000 | awk '{print $1}')"
